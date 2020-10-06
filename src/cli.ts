@@ -3,6 +3,7 @@ import * as yargs from 'yargs';
 type Options = {
   fileName: string | undefined;
   port: number;
+  socket: string | undefined;
   corsOrigin: string | true;
   openEditor: boolean;
   extendURL: string | undefined;
@@ -25,6 +26,12 @@ function builder(cmd) {
         type: 'number',
         requiresArg: true,
         default: process.env.PORT || 9002,
+      },
+      socket: {
+        alias: 's',
+        describe: 'Unix socket to bind on. If present, disable port',
+        type: 'string',
+        requiresArg: true
       },
       open: {
         alias: 'o',
@@ -85,6 +92,7 @@ export function parseCLI(commandCB: (options: Options) => void) {
     commandCB({
       fileName: argv.SDLFile,
       port: argv.port,
+      socket: argv.socket,
       corsOrigin: argv['cors-origin'],
       openEditor: argv.open,
       extendURL: argv.extend,

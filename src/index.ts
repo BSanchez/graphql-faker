@@ -85,7 +85,7 @@ function runServer(
   remoteSDL?: Source,
   customExecuteFn?,
 ) {
-  const { port, openEditor } = options;
+  const { socket, port, openEditor } = options;
   const corsOptions = {
     credentials: true,
     origin: options.corsOrigin,
@@ -159,7 +159,7 @@ function runServer(
     ),
   );
 
-  const server = app.listen(port);
+  const server = app.listen(socket || port);
 
   const shutdown = () => {
     server.close();
@@ -169,18 +169,21 @@ function runServer(
   process.on('SIGINT', shutdown);
   process.on('SIGTERM', shutdown);
 
-  log(`\n${chalk.green('✔')} Your GraphQL Fake API is ready to use 🚀
-  Here are your links:
+  if (!socket) {
+    log(`\n${chalk.green('✔')} Your GraphQL Fake API is ready to use 🚀
+    Here are your links:
 
-  ${chalk.blue('❯')} Interactive Editor: http://localhost:${port}/editor
-  ${chalk.blue('❯')} GraphQL API:        http://localhost:${port}/graphql
-  ${chalk.blue('❯')} GraphQL Voyager:    http://localhost:${port}/voyager
+    ${chalk.blue('❯')} Interactive Editor: http://localhost:${port}/editor
+    ${chalk.blue('❯')} GraphQL API:        http://localhost:${port}/graphql
+    ${chalk.blue('❯')} GraphQL Voyager:    http://localhost:${port}/voyager
 
-  `);
+    `);
 
-  if (openEditor) {
-    setTimeout(() => open(`http://localhost:${port}/editor`), 500);
+    if (openEditor) {
+      setTimeout(() => open(`http://localhost:${port}/editor`), 500);
+    }
   }
+
 }
 
 function prettyPrintValidationErrors(validationErrors: ValidationErrors) {
